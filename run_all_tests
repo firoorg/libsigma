@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ -z "$1" ];then
+  echo "Please supply a name for the directory which holds the execuatables"
+  exit
+fi
+if [ -f $1 ]; then
+  echo "File $1 exist"
+  exit
+fi
+
+echo Running Protocol Tests
+./$1/protocol_tests
+echo Running R1 Tests
+./$1/r1_test
+echo Running Serialize Tests
+./$1/serialize_test
+echo Running Primitive Types Tests
+./$1/sigma_primitive_types_test
+echo Running Primitive Types Tests
+./$1/sigma_primitive_types_test
+echo Running Primitives Tests
+./$1/primitives_tests
+echo Running Coin Tests
+./$1/coin_tests
+echo Running Coin Spend Tests
+./$1/coin_spend_tests

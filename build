@@ -1,0 +1,35 @@
+#!/bin/bash
+if [ -z "$1" ];then
+  echo "Please supply a name for the directory to hold the execuatables"
+  exit
+fi
+if [ -f $1 ]; then
+  echo "File $1 exist"
+  exit
+fi
+if [ ! -d $1 ]; then
+cd "secp256k1" && ./autogen.sh
+./configure --enable-experimental --enable-module-ecdh --with-bignum=no
+make -j2
+cd ..
+  mkdir $1
+fi
+
+
+
+echo Building Protocol Tests
+g++ tests/protocol_tests.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/protocol_tests
+echo Building R1 Tests
+g++ tests/r1_test.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/r1_test
+echo Building Serialize Tests
+g++ tests/serialize_test.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/serialize_test
+echo Building Primitive Types Tests
+g++ tests/sigma_primitive_types_test.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/sigma_primitive_types_test
+echo Building Primitive Types Tests
+g++ tests/sigma_primitive_types_test.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/sigma_primitive_types_test
+echo Building Primitives Tests
+g++ tests/primitives_tests.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/primitives_tests
+echo Building Coin Tests
+g++ tests/coin_tests.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/coin_tests
+echo Building Coin Spend Tests
+g++ tests/coin_spend_tests.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/coin_spend_tests
