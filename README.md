@@ -4,9 +4,6 @@
 This repository contains implementations and test suites for 1-out-of-N proofs described in [https://eprint.iacr.org/2015/643.pdf],
 and also  the implementation of the **Zerocoin scheme** implemented through 1-out-of-N Proofs as is described in the paper  [1-out-of-N Proofs  Or How to Leak a Secret and Spend a Coin, Groth & Kohlweiss, https://eprint.iacr.org/2014/764.pdf]
 
-This repository contains implementations of the **Σ-protocol for one out of N commitments containing 0** and
-the **Zerocoin schema**  defined in *One-out-of-Many Proofs: Or How to Leak a Secret and Spend a Coin* [https://eprint.iacr.org/2015/643.pdf].
-
 ### Directory layout
 
 ````
