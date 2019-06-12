@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z "$1" ];then
-  echo "Please supply a name for the directory which holds the execuatables"
+  echo "Please supply a name for the directory to hold the execuatables"
   exit
 fi
 if [ -f $1 ]; then
@@ -15,8 +15,6 @@ echo Running R1 Tests
 ./$1/r1_test
 echo Running Serialize Tests
 ./$1/serialize_test
-echo Running Primitive Types Tests
-./$1/sigma_primitive_types_test
 echo Running Primitive Types Tests
 ./$1/sigma_primitive_types_test
 echo Running Primitives Tests
