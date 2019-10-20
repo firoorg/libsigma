@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(one_out_of_n)
             commits[i].randomize();
         }
     }
-    sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(params);
+    sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(n,m);
 
     prover.proof(commits, index, r, proof);
 
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(prove_and_verify_in_different_set)
         }
     }
 
-    sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(params);
+    sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(n,m);
 
     prover.proof(commits, index, r, proof);
 
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(prove_coin_out_of_index)
         commits[i].randomize();
     }
 
-    sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(params);
+    sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(n,m);
 
     prover.proof(commits, commits.size(), r, proof);
 
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(prove_coin_not_in_set)
         commits[i].randomize();
     }
 
-    sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(params);
+    sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(n,m);
 
     prover.proof(commits, index, r, proof);
 

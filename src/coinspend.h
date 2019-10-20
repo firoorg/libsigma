@@ -18,7 +18,7 @@ public:
     CoinSpend(const Params* p,  Stream& strm):
         params(p),
         denomination(CoinDenomination::SIGMA_DENOM_1),
-        sigmaProof(p) {
+        sigmaProof(p->get_n(), p->get_m()) {
             strm >> * this;
         }
 
