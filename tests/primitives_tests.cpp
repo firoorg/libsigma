@@ -1,7 +1,7 @@
 #include "../src/sigma_primitives.h"
 
-#include "../secp256k1/include/GroupElement.h"
-#include "../secp256k1/include/Scalar.h"
+#include "../src/GroupElement.h"
+#include "../src/Scalar.h"
 
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_DYN_LINK
