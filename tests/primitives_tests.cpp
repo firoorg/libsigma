@@ -1,7 +1,7 @@
 #include "../src/sigma_primitives.h"
-
-#include "../secp256k1/include/GroupElement.h"
-#include "../secp256k1/include/Scalar.h"
+#include "../src/params.h"
+#include "../secp256k1/include/secp256k1_scalar.hpp"
+#include "../secp256k1/include/secp256k1_group.hpp"
 
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_DYN_LINK
@@ -31,6 +31,7 @@ BOOST_AUTO_TEST_CASE(pedersen_commitment_test)
 
 BOOST_AUTO_TEST_CASE(homomorphic_test)
 {
+    auto params = sigma::Params::get_default();
     // commit(x1,r1)+commit(x2,r2) = commit(x1+x2,r1+r2)
     secp_primitives::GroupElement h;
     h.randomize();

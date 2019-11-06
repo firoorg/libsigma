@@ -9,7 +9,7 @@ if [ -f $1 ]; then
 fi
 if [ ! -d $1 ]; then
 cd "secp256k1" && ./autogen.sh
-./configure --enable-experimental --enable-module-ecdh --with-bignum=no
+./configure --enable-experimental --enable-module-ecdh --with-bignum=no --enable-endomorphism
 make
 cd ..
   mkdir $1

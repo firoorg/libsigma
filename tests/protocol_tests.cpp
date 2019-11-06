@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(one_out_of_n)
     for(int i = 0; i < N; ++i){
         if(i == index){
             secp_primitives::GroupElement c;
-            secp_primitives::Scalar zero(uint64_t(0));
+            secp_primitives::Scalar zero(unsigned(0));
             c = sigma::SigmaPrimitives<secp_primitives::Scalar,secp_primitives::GroupElement>::commit(g, zero, h_gens[0], r);
             commits.push_back(c);
 
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(prove_and_verify_in_different_set)
     for(int i = 0; i < N; ++i){
         if(i == index){
             secp_primitives::GroupElement c;
-            secp_primitives::Scalar zero(uint64_t(0));
+            secp_primitives::Scalar zero(unsigned(0));
             c = sigma::SigmaPrimitives<secp_primitives::Scalar,secp_primitives::GroupElement>::commit(g, zero, h_gens[0], r);
             commits.push_back(c);
 
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(prove_and_verify_in_different_set)
 
     // Add more commit
     secp_primitives::GroupElement c;
-    secp_primitives::Scalar zero(uint64_t(0));
+    secp_primitives::Scalar zero(unsigned(0));
     c = sigma::SigmaPrimitives<secp_primitives::Scalar,secp_primitives::GroupElement>::commit(g, zero, h_gens[0], r);
     commits.push_back(c);
 

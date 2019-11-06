@@ -62,7 +62,7 @@ void SigmaPlusProver<Exponent, GroupElement>::proof(
         }
         secp_primitives::MultiExponent mult(commits, P_i);
         GroupElement c_k = mult.get_multiple();
-        c_k += SigmaPrimitives<Exponent, GroupElement>::commit(g_, Exponent(uint64_t(0)), h_[0], Pk[k]);
+        c_k += SigmaPrimitives<Exponent, GroupElement>::commit(g_, Exponent(unsigned(0)), h_[0], Pk[k]);
         Gk.emplace_back(c_k);
     }
     proof_out.Gk_ = Gk;
@@ -78,9 +78,9 @@ void SigmaPlusProver<Exponent, GroupElement>::proof(
 
     //computing z
     Exponent z;
-    z = r * x.exponent(uint64_t(m_));
+    z = r * x.exponent(unsigned(m_));
     Exponent sum;
-    Exponent x_k(uint64_t(1));
+    Exponent x_k(unsigned(1));
     for (int k = 0; k < m_; ++k) {
         sum += (Pk[k] * x_k);
         x_k *= x;

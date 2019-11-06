@@ -1,3 +1,4 @@
+#include "../src/params.h"
 #include "../src/r1_proof.h"
 #include "../src/r1_proof_generator.h"
 #include "../src/r1_proof_verifier.h"
@@ -24,6 +25,7 @@ BOOST_AUTO_TEST_SUITE(sigma_R1_test)
 
 BOOST_AUTO_TEST_CASE(serialize_deserialize_proof)
 {
+    auto params = sigma::Params::get_default();
     int n = 4;
     int m = 16;
     secp_primitives::GroupElement g;
@@ -34,11 +36,11 @@ BOOST_AUTO_TEST_CASE(serialize_deserialize_proof)
     for(int i = 0; i < m; ++i) {
         h.randomize();
         h_.push_back(h);
-        b.push_back(secp_primitives::Scalar(uint64_t(1)));
+        b.push_back(secp_primitives::Scalar(unsigned(1)));
         for(int j = 1; j < n; ++j){
             h.randomize();
             h_.push_back(h);
-            b.push_back(secp_primitives::Scalar(uint64_t(0)));
+            b.push_back(secp_primitives::Scalar(unsigned(0)));
 
         }
     }
@@ -63,6 +65,7 @@ BOOST_AUTO_TEST_CASE(serialize_deserialize_proof)
 
 BOOST_AUTO_TEST_CASE(fixed_size_test)
 {
+    auto params = sigma::Params::get_default();
     int n = 4;
     int m = 16;
     secp_primitives::GroupElement g;
@@ -73,11 +76,11 @@ BOOST_AUTO_TEST_CASE(fixed_size_test)
     for(int i = 0; i < m; ++i) {
         h.randomize();
         h_.push_back(h);
-        b.push_back(secp_primitives::Scalar(uint64_t(1)));
+        b.push_back(secp_primitives::Scalar(unsigned(1)));
         for(int j = 1; j < n; ++j){
             h.randomize();
             h_.push_back(h);
-            b.push_back(secp_primitives::Scalar(uint64_t(0)));
+            b.push_back(secp_primitives::Scalar(unsigned(0)));
 
         }
     }
@@ -87,6 +90,7 @@ BOOST_AUTO_TEST_CASE(fixed_size_test)
 
 BOOST_AUTO_TEST_CASE(random_size_test)
 {
+    auto params = sigma::Params::get_default();
     int n = rand() % 64 + 16;
     int m = rand() % 32 + 16;
     secp_primitives::GroupElement g;
@@ -95,11 +99,13 @@ BOOST_AUTO_TEST_CASE(random_size_test)
     std::vector<secp_primitives::Scalar> b;
     for(int i = 0; i < m; ++i) {
         secp_primitives::GroupElement h;
-        b.push_back(secp_primitives::Scalar(uint64_t(1)));
+        h.randomize();
+        h_.push_back(h);
+        b.push_back(secp_primitives::Scalar(unsigned(1)));
         for(int j = 1; j < n; ++j){
             h.randomize();
             h_.push_back(h);
-            b.push_back(secp_primitives::Scalar(uint64_t(0)));
+            b.push_back(secp_primitives::Scalar(unsigned(0)));
 
         }
     }
@@ -110,6 +116,7 @@ BOOST_AUTO_TEST_CASE(random_size_test)
 
 BOOST_AUTO_TEST_CASE(all_positions)
 {
+    auto params = sigma::Params::get_default();
     int n = 32;
     int m = 16;
     secp_primitives::GroupElement g;
@@ -123,9 +130,9 @@ BOOST_AUTO_TEST_CASE(all_positions)
                 h.randomize();
                 h_.push_back(h);
                 if(j == k)
-                    b.push_back(secp_primitives::Scalar(uint64_t(1)));
+                    b.push_back(secp_primitives::Scalar(unsigned(1)));
                 else
-                    b.push_back(secp_primitives::Scalar(uint64_t(0)));
+                    b.push_back(secp_primitives::Scalar(unsigned(0)));
             }
         }
         BOOST_CHECK(test(g, h_, b, n, m));
@@ -136,6 +143,7 @@ BOOST_AUTO_TEST_CASE(all_positions)
 
 BOOST_AUTO_TEST_CASE(one_in_random_position)
 {
+    auto params = sigma::Params::get_default();
     int n = 32;
     int m = 16;
     int k = rand() % n;
@@ -150,9 +158,9 @@ BOOST_AUTO_TEST_CASE(one_in_random_position)
             h.randomize();
             h_.push_back(h);
             if(j == k)
-                b.push_back(secp_primitives::Scalar(uint64_t(1)));
+                b.push_back(secp_primitives::Scalar(unsigned(1)));
             else
-                b.push_back(secp_primitives::Scalar(uint64_t(0)));
+                b.push_back(secp_primitives::Scalar(unsigned(0)));
         }
     }
     BOOST_CHECK(test(g, h_, b, n, m));
@@ -161,6 +169,7 @@ BOOST_AUTO_TEST_CASE(one_in_random_position)
 
 BOOST_AUTO_TEST_CASE(all_0s_in_random_row)
 {
+    auto params = sigma::Params::get_default();
     int n = 32;
     int m = 16;
     int k = rand() % m;
@@ -174,9 +183,9 @@ BOOST_AUTO_TEST_CASE(all_0s_in_random_row)
             h.randomize();
             h_.push_back(h);
             if(i != k)
-                b.push_back(secp_primitives::Scalar(uint64_t(1)));
+                b.push_back(secp_primitives::Scalar(unsigned(1)));
             else
-                b.push_back(secp_primitives::Scalar(uint64_t(0)));
+                b.push_back(secp_primitives::Scalar(unsigned(0)));
         }
     }
     BOOST_CHECK(!test(g, h_, b, n, m)); // expect false
@@ -184,6 +193,7 @@ BOOST_AUTO_TEST_CASE(all_0s_in_random_row)
 
 BOOST_AUTO_TEST_CASE(all_1s_in_random_row)
 {
+    auto params = sigma::Params::get_default();
     int n = 32;
     int m = 16;
     int k = rand() % m;
@@ -197,9 +207,9 @@ BOOST_AUTO_TEST_CASE(all_1s_in_random_row)
             h.randomize();
             h_.push_back(h);
             if(i == k)
-                b.push_back(secp_primitives::Scalar(uint64_t(1)));
+                b.push_back(secp_primitives::Scalar(unsigned(1)));
             else
-                b.push_back(secp_primitives::Scalar(uint64_t(0)));
+                b.push_back(secp_primitives::Scalar(unsigned(0)));
         }
     }
     BOOST_CHECK(!test(g, h_, b, n, m)); // expect false
@@ -208,6 +218,7 @@ BOOST_AUTO_TEST_CASE(all_1s_in_random_row)
 
 BOOST_AUTO_TEST_CASE(two_1s_in_random_row)
 {
+    auto params = sigma::Params::get_default();
     int n = 32;
     int m = 16;
     int k = rand() % n;
@@ -221,12 +232,14 @@ BOOST_AUTO_TEST_CASE(two_1s_in_random_row)
             h.randomize();
             h_.push_back(h);
             if(j == k){
-                b.push_back(secp_primitives::Scalar(uint64_t(1)));
-                b.push_back(secp_primitives::Scalar(uint64_t(1)));
+                b.push_back(secp_primitives::Scalar(unsigned(1)));
+                b.push_back(secp_primitives::Scalar(unsigned(1)));
+                h.randomize();
+                h_.push_back(h);
                 ++j;
             }
             else
-                b.push_back(secp_primitives::Scalar(uint64_t(0)));
+                b.push_back(secp_primitives::Scalar(unsigned(0)));
         }
     }
     BOOST_CHECK(!test(g, h_, b, n, m)); // expect false
@@ -234,6 +247,7 @@ BOOST_AUTO_TEST_CASE(two_1s_in_random_row)
 
 BOOST_AUTO_TEST_CASE(one_all_0s_element)
 {
+    auto params = sigma::Params::get_default();
     int n = 32;
     int m = 16;
     int r;
@@ -249,9 +263,9 @@ BOOST_AUTO_TEST_CASE(one_all_0s_element)
                 h.randomize();
                 h_.push_back(h);
                 if(j == k && i != r)
-                    b.push_back(secp_primitives::Scalar(uint64_t(1)));
+                    b.push_back(secp_primitives::Scalar(unsigned(1)));
                 else
-                    b.push_back(secp_primitives::Scalar(uint64_t(0)));
+                    b.push_back(secp_primitives::Scalar(unsigned(0)));
             }
         }
         BOOST_CHECK(!test(g, h_, b, n, m)); // expect false

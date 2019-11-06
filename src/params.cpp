@@ -1,4 +1,5 @@
 #include "params.h"
+#include <openssl/rand.h>
 
 namespace sigma {
 
@@ -39,9 +40,25 @@ Params::Params(const GroupElement& g, int n, int m) :
         h_[i - 1].sha256(buff);
         h_[i].generate(buff);
     }
+
+    ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
+
+    if (!ctx)
+        throw ("Failed to create secp256k1's context.");
+
+    try {
+        secp256k1::initialize(ctx, [] (unsigned char *buf, size_t size) {
+            while (!RAND_bytes(buf, size));
+        });
+    } catch (std::exception& e) {
+        secp256k1_context_destroy(ctx);
+        throw ("Failed to initialize secp256k1's context.");
+    }
 }
 
 Params::~Params(){
+    secp256k1::terminate();
+    secp256k1_context_destroy(ctx);
     delete instance;
 }
 
