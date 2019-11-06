@@ -2,8 +2,8 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 
-#include "../src/Scalar.h"
-#include "../src/GroupElement.h"
+#include "../secp256k1/include/Scalar.h"
+#include "../secp256k1/include/GroupElement.h"
 
 BOOST_AUTO_TEST_SUITE(sigma_primitive_types)
 
