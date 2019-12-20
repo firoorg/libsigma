@@ -154,6 +154,10 @@ bool Scalar::isMember() const {
     return *this == Scalar(*this).mod_p();
 }
 
+bool Scalar::isZero() const {
+    return secp256k1_scalar_is_zero(&data->value);
+}
+
 Scalar& Scalar::mod_p() {
     secp256k1_scalar zero, result;
 

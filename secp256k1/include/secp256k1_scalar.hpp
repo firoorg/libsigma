@@ -49,6 +49,8 @@ public:
 
     bool isMember() const;
 
+    bool isZero() const;
+
     Scalar& mod_p();
     Scalar inverse() const;
     Scalar negate() const;

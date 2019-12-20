@@ -232,6 +232,11 @@ bool GroupElement::isMember() const {
     return secp256k1_ge_is_valid_var(&v);
 }
 
+bool GroupElement::isInfinity() const
+{
+    return secp256k1_gej_is_infinity(&data->value);
+}
+
 GroupElement GroupElement::inverse() const {
     Data r;
     secp256k1_gej_neg(&r.value, &data->value);

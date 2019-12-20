@@ -1,3 +1,4 @@
+#include <math.h>
 namespace sigma{
 template<class Exponent, class GroupElement>
 SigmaPlusVerifier<Exponent, GroupElement>::SigmaPlusVerifier(
@@ -14,7 +15,8 @@ SigmaPlusVerifier<Exponent, GroupElement>::SigmaPlusVerifier(
 template<class Exponent, class GroupElement>
 bool SigmaPlusVerifier<Exponent, GroupElement>::verify(
         const std::vector<GroupElement>& commits,
-        const SigmaPlusProof<Exponent, GroupElement>& proof) const {
+        const SigmaPlusProof<Exponent, GroupElement>& proof,
+        bool fPadding) const {
 
     R1ProofVerifier<Exponent, GroupElement> r1ProofVerifier(g_, h_, proof.B_, n, m);
     std::vector<Exponent> f;
@@ -22,12 +24,12 @@ bool SigmaPlusVerifier<Exponent, GroupElement>::verify(
     if (!r1ProofVerifier.verify(r1Proof, f, true /* Skip verification of final response */))
         return false;
 
-    if (!(proof.B_).isMember())
+    if (!(proof.B_).isMember() || proof.B_.isInfinity())
         return false;
 
     const std::vector <GroupElement>& Gk = proof.Gk_;
     for (int k = 0; k < m; ++k) {
-        if (!Gk[k].isMember())
+        if (!Gk[k].isMember() || Gk[k].isInfinity())
             return false;
     }
 
@@ -43,13 +45,18 @@ bool SigmaPlusVerifier<Exponent, GroupElement>::verify(
     if (!r1ProofVerifier.verify_final_response(r1Proof, challenge_x, f))
         return false;
 
-    if(!proof.z_.isMember())
+    if(!proof.z_.isMember() || proof.z_.isZero())
         return false;
+
+    if (commits.empty())
+        return false;
+
 
     int N = commits.size();
     std::vector<Exponent> f_i_;
     f_i_.reserve(N);
-    for(int i = 0; i < N; ++i) {
+    // if fPadding is true last index is special
+    for (std::size_t i = 0; i < (fPadding ? N-1 : N); ++i) {
         std::vector<uint64_t> I = SigmaPrimitives<Exponent, GroupElement>::convert_to_nal(i, n, m);
         Exponent f_i(unsigned(1));
         for(int j = 0; j < m; ++j){
@@ -58,8 +65,44 @@ bool SigmaPlusVerifier<Exponent, GroupElement>::verify(
         f_i_.emplace_back(f_i);
     }
 
+    if (fPadding) {
+        /*
+         * Optimization for getting power for last 'commits' array element is done similarly to the one used in creating
+         * a proof. The fact that sum of any row in 'f' array is 'x' (challenge value) is used.
+         *
+         * Math (in TeX notation):
+         *
+         * \sum_{i=s+1}^{N-1} \prod_{j=0}^{m-1}f_{j,i_j} =
+         *   \sum_{j=0}^{m-1}
+         *     \left[
+         *       \left( \sum_{i=s_j+1}^{n-1}f_{j,i} \right)
+         *       \left( \prod_{k=j}^{m-1}f_{k,s_k} \right)
+         *       x^j
+         *     \right]
+         */
+
+        Exponent pow(uint64_t(1));
+        std::vector<uint64_t> I = SigmaPrimitives<Exponent, GroupElement>::convert_to_nal(N - 1, n, m);
+        vector<Exponent> f_part_product;    // partial product of f array elements for lastIndex
+        for (int j = m - 1; j >= 0; j--) {
+            f_part_product.push_back(pow);
+            pow *= f[j * n + I[j]];
+        }
+
+        Exponent xj(uint64_t(1));;    // x^j
+        for (int j = 0; j < m; j++) {
+            Exponent fi_sum(unsigned(0));
+            for (int i = I[j] + 1; i < n; i++)
+                fi_sum += f[j*n + i];
+            pow += fi_sum * xj * f_part_product[m - j - 1];
+            xj *= challenge_x;
+        }
+        f_i_.emplace_back(pow);
+    }
+
     secp_primitives::MultiExponent mult(commits, f_i_);
     GroupElement t1 = mult.get_multiple();
+
     GroupElement t2;
     Exponent x_k(unsigned(1));
     for(int k = 0; k < m; ++k){

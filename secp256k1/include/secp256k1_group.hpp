@@ -44,6 +44,8 @@ public:
 
     bool isMember() const;
 
+    bool isInfinity() const;
+
     GroupElement inverse() const;
     void square();
 
