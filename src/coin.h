@@ -5,6 +5,7 @@
 #include "sigma_primitives.h"
 #include "../secp256k1/include/secp256k1_ecdh.h"
 #include "../secp256k1/include/secp256k1.h"
+#include "../bitcoin/uint256.h"
 
 //#include "../consensus/validation.h"
 //#include "../libzerocoin/Zerocoin.h"
@@ -92,6 +93,11 @@ public:
         CoinDenomination denomination,
         int version = 0);
 
+     PrivateCoin(const Params* p,
+        CoinDenomination denomination,
+        uint512 seed,
+        int version = 0);
+
     const Params * getParams() const;
     const PublicCoin& getPublicCoin() const;
     const Scalar& getSerialNumber() const;
@@ -104,6 +110,7 @@ public:
     const unsigned char* getEcdsaSeckey() const;
 
     void setEcdsaSeckey(const std::vector<unsigned char> &seckey);
+    void setEcdsaSeckey(uint256 &seckey);
 
     static Scalar serialNumberFromSerializedPublicKey(
         const secp256k1_context *context,
@@ -118,6 +125,7 @@ private:
     unsigned char ecdsaSeckey[32];
 
     void mintCoin(const CoinDenomination denomination);
+    bool mintCoin(const CoinDenomination denomination, uint512 seed);
 
 };
 

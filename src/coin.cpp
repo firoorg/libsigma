@@ -5,6 +5,10 @@
 #include <openssl/rand.h>
 #include <sstream>
 #include "openssl_context.h"
+#include "../bitcoin/uint256.h"
+#include "../bitcoin/arith_uint256.h"
+#include "../bitcoin/hash.h"
+
 
 namespace sigma {
 
@@ -193,6 +197,15 @@ PrivateCoin::PrivateCoin(const Params* p, CoinDenomination denomination, int ver
         this->mintCoin(denomination);
 }
 
+//class PrivateCoin
+PrivateCoin::PrivateCoin(const Params* p, CoinDenomination denomination, uint512 seed, int version)
+    : params(p)
+{
+        this->version = version;
+        if(!this->mintCoin(denomination, seed))
+            throw std::invalid_argument("seed is invalid.");
+}
+
 const Params * PrivateCoin::getParams() const {
     return this->params;
 }
@@ -216,6 +229,13 @@ const unsigned char* PrivateCoin::getEcdsaSeckey() const {
 void PrivateCoin::setEcdsaSeckey(const std::vector<unsigned char> &seckey) {
     if (seckey.size() == sizeof(ecdsaSeckey))
         std::copy(seckey.cbegin(), seckey.cend(), &ecdsaSeckey[0]);
+    else
+        throw std::invalid_argument("EcdsaSeckey size does not match.");
+}
+
+void PrivateCoin::setEcdsaSeckey(uint256 &seckey) {
+    if (seckey.size() == sizeof(ecdsaSeckey))
+        std::copy(seckey.begin(), seckey.end(), &ecdsaSeckey[0]);
     else
         throw std::invalid_argument("EcdsaSeckey size does not match.");
 }
@@ -258,6 +278,33 @@ void PrivateCoin::mintCoin(const CoinDenomination denomination){
     GroupElement commit = SigmaPrimitives<Scalar, GroupElement>::commit(
             params->get_g(), serialNumber, params->get_h0(), randomness);
     publicCoin = PublicCoin(commit, denomination);
+}
+
+bool PrivateCoin::mintCoin(const CoinDenomination denomination, uint512 seed){
+    //convert state seed into a seed for the private key
+    uint256 nSeedPrivKey = seed.trim256();
+    nSeedPrivKey = Hash(nSeedPrivKey.begin(), nSeedPrivKey.end());
+    this->setEcdsaSeckey(nSeedPrivKey);
+
+    // Create a key pair
+    secp256k1_pubkey pubkey;
+    if (!secp256k1_ec_pubkey_create(OpenSSLContext::get_context(), &pubkey, this->ecdsaSeckey)){
+        return false;
+    }
+    // Hash the public key in the group to obtain a serial number
+    serialNumber = serialNumberFromSerializedPublicKey(
+        OpenSSLContext::get_context(), &pubkey);
+
+    //hash randomness seed with Bottom 256 bits of seed
+    uint256 nSeedRandomness = ArithToUint512(UintToArith512(seed) >> 256).trim256();
+    randomness.memberFromSeed(nSeedRandomness.begin());
+
+    // Generate a Pedersen commitment to the serial number
+    GroupElement commit = SigmaPrimitives<Scalar, GroupElement>::commit(
+             params->get_g(), serialNumber, params->get_h0(), randomness);
+    publicCoin = PublicCoin(commit, denomination);
+
+    return true;
 }
 
 Scalar PrivateCoin::serialNumberFromSerializedPublicKey(
