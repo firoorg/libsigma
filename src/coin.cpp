@@ -8,6 +8,10 @@
 #include "../bitcoin/uint256.h"
 #include "../bitcoin/arith_uint256.h"
 #include "../bitcoin/hash.h"
+//#include "../bitcoin/crypto/hmac_sha256.h"
+#include "../bitcoin/crypto/hmac_sha512.h"
+#include "../bitcoin/crypto/sha256.h"
+#include "../bitcoin/crypto/sha512.h"
 
 
 namespace sigma {
@@ -198,11 +202,11 @@ PrivateCoin::PrivateCoin(const Params* p, CoinDenomination denomination, int ver
 }
 
 //class PrivateCoin
-PrivateCoin::PrivateCoin(const Params* p, CoinDenomination denomination, uint512 seed, int version)
+PrivateCoin::PrivateCoin(const Params* p, CoinDenomination denomination, BIP44MintData data, int version)
     : params(p)
 {
         this->version = version;
-        if(!this->mintCoin(denomination, seed))
+        if(!this->mintCoin(denomination, data))
             throw std::invalid_argument("seed is invalid.");
 }
 
@@ -280,8 +284,20 @@ void PrivateCoin::mintCoin(const CoinDenomination denomination){
     publicCoin = PublicCoin(commit, denomination);
 }
 
-bool PrivateCoin::mintCoin(const CoinDenomination denomination, uint512 seed){
-    //convert state seed into a seed for the private key
+bool PrivateCoin::mintCoin(const CoinDenomination denomination, BIP44MintData data){
+    // See https://github.com/zcoinofficial/zcoin/pull/392 for specification
+    // HMAC-SHA512(SHA256(index),key)
+    unsigned char countHash[CSHA256().OUTPUT_SIZE];
+    std::vector<unsigned char> result(CSHA512().OUTPUT_SIZE);
+
+    std::string nCountStr = to_string(data.index);
+    CSHA256().Write(reinterpret_cast<const unsigned char*>(nCountStr.c_str()), nCountStr.size()).Finalize(countHash);
+
+    CHMAC_SHA512(countHash, CSHA256().OUTPUT_SIZE).Write(data.keydata, 32).Finalize(&result[0]);
+
+    uint512 seed = uint512(result);
+
+    // Hash top 256 bits of seed for ECDSA key
     uint256 nSeedPrivKey = seed.trim256();
     nSeedPrivKey = Hash(nSeedPrivKey.begin(), nSeedPrivKey.end());
     this->setEcdsaSeckey(nSeedPrivKey);

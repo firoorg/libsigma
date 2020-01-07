@@ -28,6 +28,12 @@ enum class CoinDenomination : std::uint8_t {
     SIGMA_DENOM_100 = 4
 };
 
+struct BIP44MintData {
+    //! The actual byte data
+    unsigned char keydata[32];
+    const int32_t index;
+};
+
 // for LogPrintf.
 std::ostream& operator<<(std::ostream& stream, CoinDenomination denomination);
 
@@ -95,8 +101,8 @@ public:
 
      PrivateCoin(const Params* p,
         CoinDenomination denomination,
-        uint512 seed,
-        int version = 0);
+	BIP44MintData data,
+	int version = 0);
 
     const Params * getParams() const;
     const PublicCoin& getPublicCoin() const;
@@ -125,7 +131,7 @@ private:
     unsigned char ecdsaSeckey[32];
 
     void mintCoin(const CoinDenomination denomination);
-    bool mintCoin(const CoinDenomination denomination, uint512 seed);
+    bool mintCoin(const CoinDenomination denomination, BIP44MintData data);
 
 };
 
