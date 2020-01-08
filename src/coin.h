@@ -28,10 +28,22 @@ enum class CoinDenomination : std::uint8_t {
     SIGMA_DENOM_100 = 4
 };
 
-struct BIP44MintData {
-    //! The actual byte data
+class BIP44MintData {
+public:
+    BIP44MintData(unsigned char* keydata, int32_t index){
+        if(sizeof(keydata)!=32)
+            throw std::runtime_error("Invalid key size");
+        memcpy(this->keydata, keydata, 32);
+        this->index = index;
+    }
+
+    const unsigned char* getKeyData() const { return keydata; }
+    const int32_t getIndex() const {return index; }
+    unsigned int size() const { return 32; }
+
+private:
     unsigned char keydata[32];
-    const int32_t index;
+    int32_t index;
 };
 
 // for LogPrintf.
@@ -131,7 +143,7 @@ private:
     unsigned char ecdsaSeckey[32];
 
     void mintCoin(const CoinDenomination denomination);
-    bool mintCoin(const CoinDenomination denomination, BIP44MintData data);
+    bool mintCoin(const CoinDenomination denomination, const BIP44MintData data);
 
 };
 
