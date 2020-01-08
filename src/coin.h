@@ -5,6 +5,7 @@
 #include "sigma_primitives.h"
 #include "../secp256k1/include/secp256k1_ecdh.h"
 #include "../secp256k1/include/secp256k1.h"
+#include "../bitcoin/uint256.h"
 
 //#include "../consensus/validation.h"
 //#include "../libzerocoin/Zerocoin.h"
@@ -25,6 +26,24 @@ enum class CoinDenomination : std::uint8_t {
     SIGMA_DENOM_10 = 3,
     SIGMA_DENOM_25 = 6,
     SIGMA_DENOM_100 = 4
+};
+
+class BIP44MintData {
+public:
+    BIP44MintData(unsigned char* keydata, int32_t index){
+        if(sizeof(keydata)!=32)
+            throw std::runtime_error("Invalid key size");
+        memcpy(this->keydata, keydata, 32);
+        this->index = index;
+    }
+
+    const unsigned char* getKeyData() const { return keydata; }
+    const int32_t getIndex() const {return index; }
+    unsigned int size() const { return 32; }
+
+private:
+    unsigned char keydata[32];
+    int32_t index;
 };
 
 // for LogPrintf.
@@ -92,6 +111,11 @@ public:
         CoinDenomination denomination,
         int version = 0);
 
+     PrivateCoin(const Params* p,
+        CoinDenomination denomination,
+	BIP44MintData data,
+	int version = 0);
+
     const Params * getParams() const;
     const PublicCoin& getPublicCoin() const;
     const Scalar& getSerialNumber() const;
@@ -104,6 +128,7 @@ public:
     const unsigned char* getEcdsaSeckey() const;
 
     void setEcdsaSeckey(const std::vector<unsigned char> &seckey);
+    void setEcdsaSeckey(uint256 &seckey);
 
     static Scalar serialNumberFromSerializedPublicKey(
         const secp256k1_context *context,
@@ -118,6 +143,7 @@ private:
     unsigned char ecdsaSeckey[32];
 
     void mintCoin(const CoinDenomination denomination);
+    bool mintCoin(const CoinDenomination denomination, const BIP44MintData data);
 
 };
 
