@@ -30,4 +30,4 @@ g++ tests/primitives_tests.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -
 echo Building Coin Tests
 g++ tests/coin_tests.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/coin_tests
 echo Building Coin Spend Tests
-g++ tests/coin_spend_tests.cpp src/*.cpp bitcoin/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/coin_spend_tests
+g++ tests/coin_spend_tests.cpp src/*.cpp bitcoin/*.cpp bitcoin/support/*.cpp bitcoin/crypto/*.cpp -g -Isecp256k1/include secp256k1/.libs/libsecp256k1.a  -lssl -lcrypto  -lboost_unit_test_framework -std=c++11 -o $1/coin_spend_tests
