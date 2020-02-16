@@ -23,11 +23,6 @@ std::ostream& operator<<(std::ostream& stream, CoinDenomination denomination) {
     return stream;
 }
 
-//bool DenominationToInteger(CoinDenomination denom, int64_t& denom_out) {
-//    CValidationState dummy_state;
-//    return DenominationToInteger(denom, denom_out, dummy_state);
-//}
-//
 bool DenominationToInteger(CoinDenomination denom, int64_t& denom_out){
     switch (denom) {
         default:
@@ -57,66 +52,6 @@ bool DenominationToInteger(CoinDenomination denom, int64_t& denom_out){
 return true;
 }
 
-//bool RealNumberToDenomination(const double& value, CoinDenomination& denom_out) {
-//    return IntegerToDenomination(value * COIN, denom_out);
-//}
-//
-//bool StringToDenomination(const std::string& str, CoinDenomination& denom_out) {
-//    if (str == "0.05") {
-//        denom_out = CoinDenomination::SIGMA_DENOM_0_05;
-//        return true;
-//    }
-//    if (str == "0.1") {
-//        denom_out = CoinDenomination::SIGMA_DENOM_0_1;
-//        return true;
-//    }
-//    if (str == "0.5") {
-//        denom_out = CoinDenomination::SIGMA_DENOM_0_5;
-//        return true;
-//    }
-//    if (str == "1") {
-//        denom_out = CoinDenomination::SIGMA_DENOM_1;
-//        return true;
-//    }
-//    if (str == "10") {
-//        denom_out = CoinDenomination::SIGMA_DENOM_10;
-//        return true;
-//    }
-//    if (str == "25") {
-//        denom_out = CoinDenomination::SIGMA_DENOM_25;
-//        return true;
-//    }
-//    if (str == "100") {
-//        denom_out = CoinDenomination::SIGMA_DENOM_100;
-//        return true;
-//    }
-//    return false;
-//}
-//
-//std::string DenominationToString(const CoinDenomination& denom) {
-//    if (denom == CoinDenomination::SIGMA_DENOM_0_1) {
-//        return "0.1";
-//    }
-//    if (denom == CoinDenomination::SIGMA_DENOM_0_5) {
-//        return "0.5";
-//    }
-//    if (denom == CoinDenomination::SIGMA_DENOM_1) {
-//        return "1";
-//    }
-//    if (denom == CoinDenomination::SIGMA_DENOM_10) {
-//        return "10";
-//    }
-//    if (denom == CoinDenomination::SIGMA_DENOM_100) {
-//        return "100";
-//    }
-//    throw ZerocoinException("Unsupported denomination, unable to convert to string.");
-//}
-//
-//bool IntegerToDenomination(int64_t value, CoinDenomination& denom_out) {
-//    CValidationState dummy_state;
-//    return IntegerToDenomination(value, denom_out, dummy_state);
-//}
-//
 bool IntegerToDenomination(int64_t value, CoinDenomination& denom_out) {
     switch (value) {
         default:
@@ -145,16 +80,6 @@ bool IntegerToDenomination(int64_t value, CoinDenomination& denom_out) {
     }
 return true;
 }
-//
-//void GetAllDenoms(std::vector<sigma::CoinDenomination>& denominations_out) {
-//    denominations_out.push_back(CoinDenomination::SIGMA_DENOM_100);
-//    denominations_out.push_back(CoinDenomination::SIGMA_DENOM_25);
-//    denominations_out.push_back(CoinDenomination::SIGMA_DENOM_10);
-//    denominations_out.push_back(CoinDenomination::SIGMA_DENOM_1);
-//    denominations_out.push_back(CoinDenomination::SIGMA_DENOM_0_5);
-//    denominations_out.push_back(CoinDenomination::SIGMA_DENOM_0_1);
-//    denominations_out.push_back(CoinDenomination::SIGMA_DENOM_0_05);
-//}
 
 //class PublicCoin
 PublicCoin::PublicCoin()

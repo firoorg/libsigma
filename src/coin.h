@@ -7,9 +7,6 @@
 #include "../secp256k1/include/secp256k1.h"
 #include "../bitcoin/uint256.h"
 
-//#include "../consensus/validation.h"
-//#include "../libzerocoin/Zerocoin.h"
-
 #include <cinttypes>
 #include <cstring>
 
@@ -31,8 +28,6 @@ enum class CoinDenomination : std::uint8_t {
 class BIP44MintData {
 public:
     BIP44MintData(unsigned char* keydata, int32_t index){
-        if(sizeof(keydata)!=32)
-            throw std::runtime_error("Invalid key size");
         memcpy(this->keydata, keydata, 32);
         this->index = index;
     }
@@ -50,13 +45,8 @@ private:
 std::ostream& operator<<(std::ostream& stream, CoinDenomination denomination);
 
 //// Functions to convert denominations to/from an integer value.
-//bool DenominationToInteger(CoinDenomination denom, int64_t& denom_out, CValidationState &state);
-//bool IntegerToDenomination(int64_t value, CoinDenomination& denom_out, CValidationState &state);
 bool DenominationToInteger(CoinDenomination denom, int64_t& denom_out);
 bool IntegerToDenomination(int64_t value, CoinDenomination& denom_out);
-//bool StringToDenomination(const std::string& str, CoinDenomination& denom_out);
-//std::string DenominationToString(const CoinDenomination& denom);
-//bool RealNumberToDenomination(const double& value, CoinDenomination& denom_out);
 
 /// \brief Returns a list of all possible denominations in descending order of value.
 void GetAllDenoms(std::vector<sigma::CoinDenomination>& denominations_out);

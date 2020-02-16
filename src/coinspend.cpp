@@ -56,10 +56,6 @@ void CoinSpend::updateMetaData(const PrivateCoin& coin, const SpendMetaData& m){
     // (This proof is bound to the coin 'metadata', i.e., transaction hash)
     uint256 metahash = signatureHash(m);
 
-    // TODO(martun): check why this was necessary.
-    //this->serialNumberSoK = SerialNumberSignatureOfKnowledge(
-    //    p, coin, fullCommitmentToCoinUnderSerialParams, metahash);
-
     // 5. Sign the transaction under the public key associate with the serial number.
     secp256k1_pubkey pubkey;
     size_t len = 33;
